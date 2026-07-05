@@ -10,7 +10,7 @@ from memory_cal import *
 from typing import Optional, Tuple
 from SAM_train import parse_args
 import tifffile
-from mamba_sam_coencoder_fixv4 import SAM_Mamba_3D_CoEncoding
+from SAMamba3D import SAM_Mamba_3D_CoEncoding
 from image_slice_view import visualize_slice, visualize_3d_overview
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)

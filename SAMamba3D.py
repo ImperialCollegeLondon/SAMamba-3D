@@ -971,7 +971,7 @@ class SAM_Mamba_3D_CoEncoding(nn.Module):
         self.stem_ch     = stem_ch
 
         # ── Mamba Encoder ──
-        from model_segmamba.segmamba import MambaEncoder
+        from mamba_encoder import MambaEncoder
         if mamba_config is None:
             mamba_config = {
                 'in_chans': in_chans,

@@ -1,5 +1,5 @@
 """
-SAM-Mamba 3D训练py
+SAMamba3D train.py
 """
 
 import torch
@@ -7,11 +7,7 @@ import argparse
 from pathlib import Path
 from Combined_dataloader import data_loaders
 from Config import Config
-# from SAM_Mamba import SAM_Mamba_3D
-from mamba_sam_coencoder_fixv4 import SAM_Mamba_3D_CoEncoding
-# from mamba_sam_3dcoencoder_v3 import SAM_Mamba_3D_CoEncoding
-# from samamba_unet3d import SAMambaUNet3D
-# from ablation_sam import build_single
+from SAMamba3D import SAM_Mamba_3D_CoEncoding
 from trainer import SAMMambaTrainer
 import numpy as np
 import random
@@ -60,65 +56,31 @@ def create_model(args,device):
     
     # Mamba 配置
     mamba_config = {
-            'in_chans': 1,  # SAM ViT-H hidden dimension
+            'in_chans': 1,  
             'depths': [2, 2, 2, 2],
-            'dims': [48, 96, 192, 384],  # #[32, 64, 128, 256],
+            'dims': [48, 96, 192, 384],  
             'drop_path_rate': 0.1,
-            'out_indices': [0, 1, 2, 3]  # 使用所有层
+            'out_indices': [0, 1, 2, 3]  
         }
-    
-    # 创建模型
-    # model = SAM_Mamba_3D(
-    #     sam_checkpoint=args.sam_checkpoint,
-    #     model_type=args.model_type,
-    #     num_classes=args.num_classes,
-    #     embed_dim=args.embed_dim,
-    #     in_chans=args.in_chans,
-    #     out_chans=args.out_chans,
-    #     lora_rank=args.lora_rank,
-    #     mamba_config = None
-    # ).to(device)
 
     model = SAM_Mamba_3D_CoEncoding(
             model_type=args.model_type,
             mamba_config = mamba_config,
             num_classes=args.num_classes,
-            # sam_embed_dim=args.embed_dim,
+   
             in_chans=args.in_chans,
             out_chans=args.out_chans,
-            # injection_interval=3,   # 每3层SAM block注入一次
-            # layer_scale_init=1e-4,  # 训练初期微弱注入，保护SAM权重
-            # window_size=args.window_size,
             lora_rank    = 8,
             lora_alpha   = 16.0,
     ).to(device)
 
-    # model = SAMambaUNet3D(
-    #     model_type       = 'vit_b',
-    #     mamba_config     = mamba_config,
-    #     num_classes      = 4,
-    #     feature_size     = 64,
-    #     stem_channels    = 32,
-    #     hoacm_reduction  = 4,
-    #     deep_supervision = False,
-    # ).to(device)
 
-    # model.setup_freeze_strategy(args.sam_checkpoint)
     model.set_training_stage(stage='A',sam_checkpoint=args.sam_checkpoint)
     return model
 
-# def create_model_ablation(args,device):
-#     """创建消融模型（单阶段）"""
-#     model = build_single(device=device,
-#                          mode=args.ablation_mode)
-#     model.setup_freeze_strategy(args.sam_checkpoint)
-#     return model
-
 def main(args,config, data_names,dataset_img_paths, 
                     dataset_label_paths,label_mapping):
-    """主训练函数"""
     
-    # 设置设备
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
     
@@ -138,7 +100,7 @@ def main(args,config, data_names,dataset_img_paths,
     if args.ablation_mode is None:
         model = create_model(args, device)
     else:
-        model = create_model_ablation(args, device)
+        print(f"\nCreating ablation model with mode: {args.ablation_mode}")
     optimizer, scheduler = create_optimizer_scheduler(model, args)
     
 
@@ -152,8 +114,7 @@ def main(args,config, data_names,dataset_img_paths,
         config=args,
         device=device
     )
-    
-    # 执行训练
+
     if args.stage == 'stage_i' or args.stage == 'both':
         # Stage I Training
         stage_i_checkpoint = Path(config.save_dir) / 'best_model.pth'
@@ -161,10 +122,7 @@ def main(args,config, data_names,dataset_img_paths,
             checkpoint_path = stage_i_checkpoint,
             num_epochs=args.stage_i_epochs
         )
-        # stage_i_best_dice = trainer.fine_tuning(
-        #     checkpoint_path = stage_i_checkpoint,
-        #     num_epochs=args.stage_i_epochs
-        # )
+      
         
         print("\n" + "="*70)
         print("🎉 Training Completed!")
@@ -216,15 +174,7 @@ def parse_args(config):
                        help='Ablation mode')
     parser.add_argument('--window_size', type=int, default=0,
                        help='attention window size')
-    # 数据参数
-    # parser.add_argument('--train_volume_dir', type=str, default='./data/train_volumes',
-    #                    help='Training volumes directory')
-    # parser.add_argument('--train_target_dir', type=str, default='./data/train_targets',
-    #                    help='Training targets directory')
-    # parser.add_argument('--val_volume_dir', type=str, default='./data/val_volumes',
-    #                    help='Validation volumes directory')
-    # parser.add_argument('--val_target_dir', type=str, default='./data/val_targets',
-    #                    help='Validation targets directory')
+   
     parser.add_argument('--batch_size', type=int, default=config.batch_size,
                        help='Batch size')
     parser.add_argument('--num_workers', type=int, default=4,
@@ -270,82 +220,12 @@ if __name__ == '__main__':
 
     
     # 加载training数据
-    dataset_img_paths = [
-        "/gpfs/home/rzhang2/DPR-125/Image_SSa.npy",
-        # "/gpfs/home/rzhang2/DPR-125/Image_SSb.npy",
-        "/gpfs/home/rzhang2/data/WF1_image_cor.npy",
-        # "/rds/general/user/rzhang2/home/data/Ben_image_crop.npy",
-        # "/rds/general/user/rzhang2/home/data/025fw_lowCa_image.npy",
-        "/gpfs/home/rzhang2/data/DRP-151/Sample2_image_denoise.npy",
-        "/gpfs/home/rzhang2/data/DRP-157/fw85_image.npy",
-        # "/gpfs/home/rzhang2/data/DRP-263/fw6_image.npy",
-        "/gpfs/home/rzhang2/data/DRP-157/fw30_image.npy",
-        # '/gpfs/home/rzhang2/data/DRP-421/LP_image.npy' 
-        # "/gpfs/home/rzhang2/data/H2/H2/Filtered_Exp1_Imbibition1.npy"
+    dataset_img_paths = []
     
+    dataset_label_paths = []
 
-        
-    ]
-    
-    dataset_label_paths = [
-        "/gpfs/home/rzhang2/DPR-125/Label_SSa.npy",
-        # "/gpfs/home/rzhang2/DPR-125/Label_SSb.npy",
-        "/gpfs/home/rzhang2/data/WF1_labels_cor.npy",
-        # "/rds/general/user/rzhang2/home/data/Ben_labels_crop.npy",
-        # "/rds/general/user/rzhang2/home/data/025fw_lowCa_label_mapping.npy",
-        "/gpfs/home/rzhang2/data/DRP-151/Sample2_label_crop.npy",
-        "/gpfs/home/rzhang2/data/DRP-157/labels/fw_0.85_curvature_seg.npy", 
-        # "/gpfs/home/rzhang2/data/DRP-263/fw0.06_seg.npy",
-        "/gpfs/home/rzhang2/data/DRP-157/labels/fw30_label.npy", 
-        # '/gpfs/home/rzhang2/data/DRP-421/LP_seg_800.npy'
-        #  "/gpfs/home/rzhang2/data/H2/H2/Segmented_Exp1_Imbibition1.npy"
-    ]
-
-    labels_mapping = {
-        1: 1,  # dataset1: oil
-        2: 2,  # dataset1: brine
-        3: 3,  # dataset1: rock
-
-        # 3: 2,  
-        # 2: 1,  
-        # 1: 3,#H2
-
-        # 1: 1,  
-        # 2: 2,  
-        # 3: 3,
-
-        1: 2,  
-        2: 1,  
-        3: 3,
-
-        # 1: 2,  
-        # 2: 1,  
-        # 0: 3,
-
-        # 1: 2,  
-        # 2: 1,  
-        # 3: 3,
-
-        1: 1,  
-        2: 2,  
-        3: 3,
-        
-        1: 1,  
-        2: 2,  
-        3: 3,
-
-        1: 1,  
-        2: 2,  
-        3: 3,
-
-        # 0: 1,
-        # 1: 2,
-        # 2: 3,
-        # 3: 0,
-        
-        
-    }
-    data_names =  ['SSa','WF1','DRP151-sample2','FW85','FW30'] #,'LP''H2','SSb','DRP58','Ben172'
+    labels_mapping = None
+    data_names =  []
 
     args = parse_args(config)
     timestamp = args.save_name 

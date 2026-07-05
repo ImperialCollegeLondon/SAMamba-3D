@@ -10,7 +10,7 @@ from pathlib import Path
 import time
 from early_stopping import EarlyStopping
 from segment_anything import SamAutomaticMaskGenerator, sam_model_registry
-from Compoundloss import RockCoreLoss,EnhancedLoss
+from Compoundloss import RockCoreLoss
 
 class SAMMambaTrainer:
     
@@ -36,7 +36,7 @@ class SAMMambaTrainer:
         
         # 损失函数
         self.ce_loss = nn.CrossEntropyLoss()
-        self.losses = RockCoreLoss()  #EnhancedLoss()
+        self.losses = RockCoreLoss() 
         
         # Mixed Precision Training
         self.use_amp = getattr(config, 'use_amp', True)
