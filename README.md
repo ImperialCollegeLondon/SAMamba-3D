@@ -10,7 +10,7 @@
 
 **Adapting Segment Anything for generalizable three-dimensional segmentation of multiphase pore-scale images**
 
-SAMamba3D adapts the pretrained **Segment Anything Model (SAM)** image encoder to volumetric data by coupling it with a multi-scale **Mamba** 3D encoder, progressive cross-scale feature interaction, and a hybrid 3D decoder. It performs **automatic, prompt-free, voxel-wise 3D segmentation** of multiphase pore-scale X-ray images (e.g. oil / brine / rock), and generalizes across rock types and imaging conditions with parameter-efficient fine-tuning (LoRA + adapters).
+SAMamba3D adapts the pretrained **Segment Anything Model (SAM)** image encoder to volumetric data by coupling it with a multi-scale **Mamba** 3D encoder, progressive cross-scale feature interaction, and a hybrid 3D decoder. It performs **automatic, prompt-free, voxel-wise 3D segmentation** of multiphase pore-scale X-ray images (e.g. oil / brine / rock), and generalizes across rock types and imaging conditions with parameter-efficient fine-tuning.
 
 
 <p align="center">
