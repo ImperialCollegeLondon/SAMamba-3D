@@ -18,10 +18,9 @@ SAMamba3D adapts the pretrained **Segment Anything Model (SAM)** image encoder t
 </p>
 <p align="center"><em>From raw micro-CT volume to voxel-wise oil/brine/rock segmentation, fully automatic and in 3D.</em></p>
 
-> 📄 **Paper:** Zhang, R., Song, X., Zhu, L., Bijeljic, B., Li, G., & Blunt, M. J. (2026). *SAMamba3D: Adapting segment anything for generalizable three-dimensional segmentation of multiphase pore-scale images*. **Advances in Geo-Energy Research, 21(2)**. https://doi.org/10.46690/ager.2026.08.03
+> 📄 **Paper:** Zhang, R., Song, X., Zhu, L., Bijeljic, B., Li, G., & Blunt, M. J. (2026). *SAMamba3D: Adapting segment anything for generalizable three-dimensional segmentation of multiphase pore-scale images*. **Advances in Geo-Energy Research, 21(2), 109–124**. https://doi.org/10.46690/ager.2026.08.03
 >
 > 📦 **SAMamba3D model:** [SAMamba3D-turbo checkpoint (Google Drive)](https://drive.google.com/drive/folders/1bl8ZiSdgIQokrrETux9xTsQ_MF55EPaU?usp=sharing)
-
 
 ## 📑 Table of contents
 
@@ -537,6 +536,7 @@ If you use this code or model in your research, please cite:
   journal = {Advances in Geo-Energy Research},
   volume  = {21},
   number  = {2},
+  pages   = {109--124},
   year    = {2026},
   doi     = {10.46690/ager.2026.08.03}
 }
