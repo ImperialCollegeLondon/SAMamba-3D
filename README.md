@@ -196,8 +196,8 @@ The default label convention used by the evaluation helper:
 | Label | Phase |
 |:---:|---|
 | `0` | Unknown / background |
-| `1` | Oil |
-| `2` | Brine |
+| `1` | Non-wetting phase |
+| `2` | Wetting phase |
 | `3` | Rock |
 
 For other segmentation tasks, update `num_classes`, `label_mapping`, and the class names in `model_inference.py`. Labels must be integers in `[0, num_classes - 1]`.
@@ -219,9 +219,9 @@ np.save("data/my_volume/image.npy", vol)
 Inference is implemented in `model_inference.py` with sliding-window prediction over the full volume.
 
 <p align="center">
-  <img src="assets/Mixed-wet_slice_view.svg" alt="Qualitative segmentation results: raw slice, ground truth, and SAMamba3D prediction" width="90%">
+  <img src="assets/Mixed-wet_slice_view.svg" alt="Qualitative segmentation results: raw slice, base case, and SAMamba3D prediction" width="90%">
 </p>
-<p align="center"><em>Slice-level comparison of raw image, ground truth, and SAMamba3D prediction.</em></p>
+<p align="center"><em>Slice-level comparison of raw image, base case/ ground truth, and SAMamba3D prediction.</em></p>
 
 ### 1. Pre-flight checklist
 
@@ -474,10 +474,8 @@ The repository is research code and contains project-specific defaults. Check th
 
 1. **Training data lists are empty by default** — populate `dataset_img_paths`, `dataset_label_paths`, and `data_names` in `SAM_train.py`.
 2. **Inference requires `config.device`** — add `config.device = torch.device(...)` in `model_inference.py` before calling `test_model()`.
-3. **`data_transfer.py` is not in the repository** — remove or replace the `DomainTransfer` block in `model_inference.py`.
-4. **`stage_ii` is scaffolded but not implemented** — use `stage_i` or `fine_tuning()`.
-5. **`vit_b` is the safest default** — `vit_l` has an architecture branch; treat `vit_h` as experimental.
-6. **`mamba_ssm` must be installed separately** — it is imported by `mamba_encoder.py`.
+3. **`vit_b` is the safest default** — `vit_l` has an architecture branch; treat `vit_h` as experimental.
+4. **`mamba_ssm` must be installed separately** — it is imported by `mamba_encoder.py`.
 
 ---
 
