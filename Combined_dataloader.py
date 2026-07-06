@@ -149,7 +149,20 @@ class Unified3DPatchDataset(Dataset):
             'edge': torch.from_numpy(edge_mask).float()
         }
 
-
+def percentile_normalization(source: np.ndarray, target: np.ndarray,
+                                 percentiles: Tuple[int, int] = (1, 99)) -> np.ndarray:
+        source = source.astype(np.float32)
+        target = target.astype(np.float32)
+        
+        # 计算百分位数
+        src_low, src_high = np.percentile(source, percentiles)
+        tgt_low, tgt_high = np.percentile(target, percentiles)
+        
+        aligned = (source - src_low) / (src_high - src_low + 1e-8)
+        aligned = aligned * (tgt_high - tgt_low) + tgt_low
+        aligned = np.clip(aligned, tgt_low, tgt_high)
+        
+        return aligned.astype(np.float32)
 def get_train_val_test(data_names,datas, labels, patch_size, num_patches_list, config,global_stats=None):
     """
     划分数据并返回三个 Dataset 实例
@@ -257,17 +270,6 @@ def map_labels(labels, label_mapping):
 
 def percentile_normalization(source: np.ndarray, target: np.ndarray,
                                  percentiles: Tuple[int, int] = (1, 99)) -> np.ndarray:
-        """
-        百分位归一化 - 基于百分位数对齐图像
-        
-        Args:
-            source: 源域图像
-            target: 目标域图像
-            percentiles: 百分位数范围
-        
-        Returns:
-            对齐后的图像
-        """
         source = source.astype(np.float32)
         target = target.astype(np.float32)
         
@@ -275,7 +277,6 @@ def percentile_normalization(source: np.ndarray, target: np.ndarray,
         src_low, src_high = np.percentile(source, percentiles)
         tgt_low, tgt_high = np.percentile(target, percentiles)
         
-        # 线性映射
         aligned = (source - src_low) / (src_high - src_low + 1e-8)
         aligned = aligned * (tgt_high - tgt_low) + tgt_low
         aligned = np.clip(aligned, tgt_low, tgt_high)

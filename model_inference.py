@@ -333,9 +333,8 @@ def test_model(config: Config, args, checkpoint_path: str,save_filename: str,vis
 
     print("starting inference...")
     data, labels, data_mean, data_std = load_and_prepare_data(config)
-    target_data = np.load("/gpfs/home/rzhang2/DPR-125/Image_SSa.npy").astype(np.float32)
+    target_data = np.load("data/Image_SSa.npy").astype(np.float32)
     min_dim = min(data.shape[1], data.shape[2])
-    min_dim = 512
       
     if labels is not None:
         if min_dim > len(data):
@@ -349,15 +348,13 @@ def test_model(config: Config, args, checkpoint_path: str,save_filename: str,vis
         test_data= data[:, :min_dim, :min_dim]
         test_labels = None
 
-    from data_transfer import DomainTransfer
-    dt = DomainTransfer()
-    test_data = dt.percentile_normalization(test_data,target_data)
+    from Combined_dataloader import percentile_normalization
+    test_data = percentile_normalization(test_data,target_data)
     
     # denoise
     # from scipy import ndimage
     # data = ndimage.median_filter(data, size=5)
-    # np.save("SSb_transto_SSa.npy",test_data)
-    # test_data = dt.histogram_matching(test_data,target_data)
+    # test_data = histogram_matching(test_data,target_data)
 
     if labels_map and  test_labels is not None:
         test_labels = map_labels(test_labels, config.label_mapping)
