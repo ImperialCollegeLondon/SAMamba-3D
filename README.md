@@ -32,7 +32,6 @@ SAMamba3D adapts the pretrained **Segment Anything Model (SAM)** image encoder t
 - [Training](#-training)
 - [Python API](#-python-api)
 - [Model architecture](#%EF%B8%8F-model-architecture)
-- [Loss and metrics](#-loss-and-metrics)
 - [Repository structure](#%EF%B8%8F-repository-structure)
 - [Implementation notes](#-current-implementation-notes)
 - [Troubleshooting](#%EF%B8%8F-troubleshooting)
