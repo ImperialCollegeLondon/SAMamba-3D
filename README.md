@@ -21,6 +21,7 @@ SAMamba3D adapts the pretrained **Segment Anything Model (SAM)** image encoder t
 > 📄 **Paper:** Zhang, R., Song, X., Zhu, L., Bijeljic, B., Li, G., & Blunt, M. J. (2026). *SAMamba3D: Adapting segment anything for generalizable three-dimensional segmentation of multiphase pore-scale images*. **Advances in Geo-Energy Research, 21(2), 109–124**. https://doi.org/10.46690/ager.2026.08.03
 >
 > 📦 **SAMamba3D model:** [SAMamba3D-turbo checkpoint (Google Drive)](https://drive.google.com/drive/folders/1bl8ZiSdgIQokrrETux9xTsQ_MF55EPaU?usp=sharing)
+> 🇨🇳 **Mainland China mirror:** [SAMamba3D-turbo checkpoint (ModelScope)](https://modelscope.cn/models/LinqiZhu/SAMamba3D-turbo)
 
 ## 📑 Table of contents
 
